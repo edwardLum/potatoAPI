@@ -1,15 +1,17 @@
 from enum import Enum
+from typing import Union
 
 from fastapi import FastAPI
 
 
 app = FastAPI()
 
+fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
 
 class ModelName(str, Enum):
     alexnet = "alexnet"
     resnet = "resnet"
-    lenet = "lesnet"
+    lenet = "lenet"
 
 
 @app.get("/")
@@ -24,16 +26,19 @@ async def root():
 
 
 @app.get("/items/{item_id}")
-async def read_item(item_id: int):
+async def read_item(item_id: str, q: Union[str, None] = None): # python3.10 and above: async def read_item(item_id: str, q: str | None = None):
     """
     Returns the details of a specific item.
 
     Args:
-        item_id: An integer representing the ID of the item to retrieve.
+        item_id: A string representing the ID of an item.
+        q: A string that represents an optional query parameter.
 
     Returns:
         A dictionary containing the ID of the item.
     """
+    if q:
+        return {"item_id": item_id, "q": q}
     return {"item_id": item_id}
 
 
@@ -80,17 +85,3 @@ async def get_model(model_name: ModelName):
         return {"model_name": model_name, "message": "LeCNN all the images"}
 
     return {"model_name": model_name, "message": "Have some residuals"}
-
-
-@app.get("files/{file_path:path}")
-async def read_file(file_path: str):
-    """
-    Returns the contents of the specified file.
-
-    Args:
-        file_path: A string representing the path to the file.
-
-    Returns:
-        A dictionary containing the contents of the specified file.
-    """
-    return {"file_path": file_path}
