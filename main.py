@@ -1,3 +1,5 @@
+import uvicorn
+
 from enum import Enum
 from typing import Union
 
@@ -85,3 +87,6 @@ async def get_model(model_name: ModelName):
         return {"model_name": model_name, "message": "LeCNN all the images"}
 
     return {"model_name": model_name, "message": "Have some residuals"}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000) 
